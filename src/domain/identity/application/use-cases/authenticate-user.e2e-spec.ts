@@ -2,11 +2,12 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TestAppModule } from 'test/setup-e2e'
 import { MongooseModule } from '@nestjs/mongoose'
-import { MongoUserSchema } from '../../infra/mongodb/schemas/mongo-user-schema'
+import { MongoUserModel } from '../../infra/mongodb/schemas/mongo-user-schema'
 import { UserFactory } from 'test/factories/make-user'
 import { hash } from 'bcryptjs'
 
 import request from 'supertest'
+import { DATABASE } from '@/core/app/databases'
 
 describe('Authenticate user (e2e)', () => {
   let app: INestApplication
@@ -16,7 +17,7 @@ describe('Authenticate user (e2e)', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         TestAppModule,
-        MongooseModule.forFeature([{ name: 'users', schema: MongoUserSchema }]),
+        MongooseModule.forFeature([MongoUserModel], DATABASE.HOMOLOG),
       ],
       providers: [UserFactory],
     }).compile()

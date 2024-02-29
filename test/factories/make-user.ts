@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { MongoUser } from '@/domain/identity/infra/mongodb/schemas/mongo-user-schema'
 import { Model } from 'mongoose'
 import { User, UserProps } from '@/domain/identity/enterprise/entities/user'
+import { DATABASE } from '@/core/app/databases'
 
 export function makeUser(
   override: Partial<UserProps> = {},
@@ -26,7 +27,9 @@ export function makeUser(
 
 @Injectable()
 export class UserFactory {
-  constructor(@InjectModel('users') private model: Model<MongoUser>) {}
+  constructor(
+    @InjectModel('users', DATABASE.HOMOLOG) private model: Model<MongoUser>,
+  ) {}
 
   async makeMongoUser(data: Partial<UserProps> = {}): Promise<User> {
     const user = makeUser(data)

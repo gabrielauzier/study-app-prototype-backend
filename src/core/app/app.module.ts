@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Logger, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from '@/domain/auth/auth.module'
 import { NotebookModule } from '@/domain/notebook/infra/notebook.module'
@@ -8,6 +8,7 @@ import { IdentityModule } from '@/domain/identity/infra/identity.module'
 import { MongoModule } from '@/domain/common/infra/database/mongodb/mongo.module'
 import { MongooseModule } from '@nestjs/mongoose'
 import { EnvService } from '../env/env.service'
+import { DATABASE } from './databases'
 
 @Module({
   imports: [
@@ -19,8 +20,21 @@ import { EnvService } from '../env/env.service'
     MongooseModule.forRootAsync({
       imports: [EnvModule],
       inject: [EnvService],
+      connectionName: DATABASE.MAIN,
       useFactory(env: EnvService) {
-        return { uri: env.get('DATABASE_URL') }
+        const URI = env.get('DATABASE_URL')
+        Logger.debug(`Mongo conected @ ${URI}`, 'InstanceLoader')
+        return { uri: URI }
+      },
+    }),
+    MongooseModule.forRootAsync({
+      imports: [EnvModule],
+      inject: [EnvService],
+      connectionName: DATABASE.HOMOLOG,
+      useFactory(env: EnvService) {
+        const URI = env.get('DATABASE_URL_HOMOLOG')
+        Logger.debug(`Mongo conected @ ${URI}`, 'InstanceLoader')
+        return { uri: URI }
       },
     }),
     MongoModule,

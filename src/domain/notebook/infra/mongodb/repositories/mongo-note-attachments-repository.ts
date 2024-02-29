@@ -1,10 +1,11 @@
 import { NoteAttachmentsRepository } from '@/domain/notebook/application/repositories/note-attachments-repository'
 import { NoteAttachment } from '@/domain/notebook/enterprise/entities/note-attachment'
 import { Injectable } from '@nestjs/common'
-import { MongoNoteAttachmentSchema } from '../schemas/mongo-note-attachment-schema'
+import { MongoNoteAttachment } from '../schemas/mongo-note-attachment-schema'
 import { MongoNoteAttachmentMapper } from '../mappers/mongo-note-attachment-mapper'
-import { MongoService } from '@/domain/common/infra/database/mongodb/mongo.service'
-import { MongooseModel } from '@/core/types/mongo'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { DATABASE } from '@/core/app/databases'
 
 /**
  * @deprecated
@@ -24,13 +25,10 @@ import { MongooseModel } from '@/core/types/mongo'
 export class MongoNoteAttachmentsRepository
   implements NoteAttachmentsRepository
 {
-  private model: MongooseModel<typeof MongoNoteAttachmentSchema>
-
-  constructor(mongo: MongoService) {
-    this.model = mongo
-      .getConnection()
-      .model('note_attachments', MongoNoteAttachmentSchema)
-  }
+  constructor(
+    @InjectModel('note_attachments', DATABASE.MAIN)
+    private model: Model<MongoNoteAttachment>,
+  ) {}
 
   async deleteMany(attachments: NoteAttachment[]): Promise<void> {
     await this.model.deleteMany({

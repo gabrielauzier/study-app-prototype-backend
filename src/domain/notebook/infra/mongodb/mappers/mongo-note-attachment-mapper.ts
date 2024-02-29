@@ -1,12 +1,10 @@
 import { MongooseDocument } from '@/core/types/mongo'
-import { MongoNoteAttachmentProps } from '../schemas/mongo-note-attachment-schema'
+import { MongoNoteAttachment } from '../schemas/mongo-note-attachment-schema'
 import { NoteAttachment } from '@/domain/notebook/enterprise/entities/note-attachment'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 export class MongoNoteAttachmentMapper {
-  static toDomain(
-    doc: MongooseDocument<MongoNoteAttachmentProps>,
-  ): NoteAttachment {
+  static toDomain(doc: MongooseDocument<MongoNoteAttachment>): NoteAttachment {
     const raw = doc.toObject()
 
     return NoteAttachment.create({
@@ -15,7 +13,7 @@ export class MongoNoteAttachmentMapper {
     })
   }
 
-  static toMongo(noteAttachment: NoteAttachment): MongoNoteAttachmentProps {
+  static toMongo(noteAttachment: NoteAttachment): MongoNoteAttachment {
     return {
       attachment_id: noteAttachment.attachmentId.toObjectID(),
       note_id: noteAttachment.noteId.toObjectID(),

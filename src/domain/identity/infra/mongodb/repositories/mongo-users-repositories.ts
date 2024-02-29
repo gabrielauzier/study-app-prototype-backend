@@ -5,10 +5,13 @@ import { MongoUser } from '../schemas/mongo-user-schema'
 import { UsersRepository } from '@/domain/identity/application/repositories/users-repository'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
+import { DATABASE } from '@/core/app/databases'
 
 @Injectable()
 export class MongoUsersRepository implements UsersRepository {
-  constructor(@InjectModel('users') private model: Model<MongoUser>) {}
+  constructor(
+    @InjectModel('users', DATABASE.HOMOLOG) private model: Model<MongoUser>,
+  ) {}
 
   async findByEmail(email: string): Promise<Student | null> {
     const student = await this.model.findOne({ email })

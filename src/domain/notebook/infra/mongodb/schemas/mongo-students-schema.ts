@@ -1,9 +1,20 @@
-import { InferSchemaType, Schema } from 'mongoose'
+import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
-export const MongoStudentSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-})
+@Schema()
+export class MongoStudent {
+  @Prop({ required: true })
+  name: string
 
-export type MongoStudentProps = InferSchemaType<typeof MongoStudentSchema>
+  @Prop({ required: true })
+  email: string
+
+  @Prop({ required: true })
+  password: string
+}
+
+export const MongoStudentSchema = SchemaFactory.createForClass(MongoStudent)
+
+export const MongoStudentModel: ModelDefinition = {
+  name: 'students',
+  schema: MongoStudentSchema,
+}

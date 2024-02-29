@@ -4,20 +4,17 @@ import { Note } from '@/domain/notebook/enterprise/entities/note'
 import { Injectable } from '@nestjs/common'
 import { MongoNoteMapper } from '../mappers/mongo-note-mapper'
 import { NoteAttachmentsRepository } from '@/domain/notebook/application/repositories/note-attachments-repository'
-import { MongooseModel } from '@/core/types/mongo'
-import { MongoNoteSchema } from '../schemas/mongo-note-schema'
-import { MongoService } from '@/domain/common/infra/database/mongodb/mongo.service'
+import { MongoNote } from '../schemas/mongo-note-schema'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { DATABASE } from '@/core/app/databases'
 
 @Injectable()
 export class MongoNotesRepository implements NotesRepository {
-  private model: MongooseModel<typeof MongoNoteSchema>
-
   constructor(
     private noteAttachmentsRepository: NoteAttachmentsRepository,
-    private mongo: MongoService,
-  ) {
-    this.model = mongo.getConnection().model('notes', MongoNoteSchema)
-  }
+    @InjectModel('notes', DATABASE.MAIN) private model: Model<MongoNote>,
+  ) {}
 
   async findById(id: string): Promise<Note | null> {
     const note = await this.model.findById(id)

@@ -5,7 +5,7 @@ export const envSchema = z.object({
     .enum(['development', 'production', 'test'])
     .default('development'),
   DATABASE_URL: z.string().url(),
-  HOMOLOG_DATABASE_URL: z
+  DATABASE_URL_HOMOLOG: z
     .string()
     .url()
     .default('mongodb://localhost:27017/homolog-db'),

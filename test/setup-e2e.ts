@@ -9,16 +9,18 @@ import { envSchema } from '@/core/env/env'
 import { EnvModule } from '@/core/env/env.module'
 import { AuthModule } from '@/domain/auth/auth.module'
 import { IdentityModule } from '@/domain/identity/infra/identity.module'
+import { DATABASE } from '@/core/app/databases'
 
 let mongo: MongoMemoryServer
 
 export const rootMongooseTestModule = (options: MongooseModuleOptions = {}) =>
   MongooseModule.forRootAsync({
+    connectionName: DATABASE.HOMOLOG,
     useFactory: async () => {
       mongo = await MongoMemoryServer.create()
       const mongoUri = mongo.getUri()
 
-      console.log(mongoUri)
+      // console.log(mongoUri)
       return {
         uri: mongoUri,
         ...options,

@@ -2,11 +2,11 @@
 import { Note } from '@/domain/notebook/enterprise/entities/note'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { MongooseDocument } from '@/core/types/mongo'
-import { MongoNoteProps } from '../schemas/mongo-note-schema'
+import { MongoNote } from '../schemas/mongo-note-schema'
 import { Slug } from '@/domain/notebook/enterprise/entities/value-objects/slug'
 
 export class MongoNoteMapper {
-  static toDomain(doc: MongooseDocument<MongoNoteProps>): Note {
+  static toDomain(doc: MongooseDocument<MongoNote>): Note {
     const raw = doc.toObject()
 
     return Note.create(
@@ -22,7 +22,7 @@ export class MongoNoteMapper {
     )
   }
 
-  static arrayToDomain(docs: MongooseDocument<MongoNoteProps>[]): Note[] {
+  static arrayToDomain(docs: MongooseDocument<MongoNote>[]): Note[] {
     const raws = docs.map((doc) => doc.toObject())
 
     return raws.map((raw) =>
@@ -40,7 +40,7 @@ export class MongoNoteMapper {
     )
   }
 
-  static toMongo(note: Note): MongoNoteProps {
+  static toMongo(note: Note): MongoNote {
     const attachments_ids = note.attachments
       .getItems()
       .map((att) => att.attachmentId.toObjectID())

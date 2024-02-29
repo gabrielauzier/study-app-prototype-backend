@@ -1,15 +1,19 @@
-import mongoose, { Schema, InferSchemaType } from 'mongoose'
+import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Types } from 'mongoose'
 
-export const MongoNoteAttachmentSchema = new Schema({
-  note_id: { type: Schema.Types.ObjectId, required: true },
-  attachment_id: { type: Schema.Types.ObjectId, required: true },
-})
+@Schema()
+export class MongoNoteAttachment {
+  @Prop({ required: true })
+  note_id: Types.ObjectId
 
-export type MongoNoteAttachmentProps = InferSchemaType<
-  typeof MongoNoteAttachmentSchema
->
+  @Prop({ required: true })
+  attachment_id: Types.ObjectId
+}
 
-export const MongoNoteAttachmentModel = mongoose.model(
-  'notes_attachments',
-  MongoNoteAttachmentSchema,
-)
+export const MongoNoteAttachmentSchema =
+  SchemaFactory.createForClass(MongoNoteAttachment)
+
+export const MongoNoteAttachmentModel: ModelDefinition = {
+  name: 'note_attachments',
+  schema: MongoNoteAttachmentSchema,
+}

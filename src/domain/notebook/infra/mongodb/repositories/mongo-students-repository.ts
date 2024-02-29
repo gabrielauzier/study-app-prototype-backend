@@ -3,18 +3,17 @@ import { Injectable } from '@nestjs/common'
 import { Student } from '@/domain/notebook/enterprise/entities/student'
 import { StudentsRepository } from '@/domain/notebook/application/repositories/students-repository'
 
-import { MongoStudentSchema } from '../schemas/mongo-students-schema'
+import { MongoStudent } from '../schemas/mongo-students-schema'
 import { MongoStudentMapper } from '../mappers/mongo-student-mapper'
-import { MongoService } from '@/domain/common/infra/database/mongodb/mongo.service'
-import { MongooseModel } from '@/core/types/mongo'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { DATABASE } from '@/core/app/databases'
 
 @Injectable()
 export class MongoStudentsRepository implements StudentsRepository {
-  private model: MongooseModel<typeof MongoStudentSchema>
-
-  constructor(mongo: MongoService) {
-    this.model = mongo.getConnection().model('students', MongoStudentSchema)
-  }
+  constructor(
+    @InjectModel('students', DATABASE.MAIN) private model: Model<MongoStudent>,
+  ) {}
 
   async findByEmail(email: string): Promise<Student | null> {
     const student = await this.model.findOne({ email })

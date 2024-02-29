@@ -1,23 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
-
-// import mongoose, { InferSchemaType } from 'mongoose'
-
-// export const MongoUserSchema = new mongoose.Schema({
-//   name: { type: String, required: true },
-//   email: { type: String, required: true },
-//   password: { type: String, required: true },
-// })
-
-// export type MongoUserProps = InferSchemaType<typeof MongoUserSchema>
-
-// export const MongoUserModel = mongoose.model('users', MongoUserSchema)
-// console.log(MongoConnection.getInstance())
-// console.log(MongoConnection.getInstance().getConnection())
-
-// export const MongoUserModel = MongoConnection.getInstance()
-//   .getConnection()
-//   .model('users', MongoUserSchema)
+import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 @Schema()
 export class MongoUser {
@@ -32,4 +13,8 @@ export class MongoUser {
 }
 
 export const MongoUserSchema = SchemaFactory.createForClass(MongoUser)
-export type MongoUserDocument = HydratedDocument<MongoUser>
+
+export const MongoUserModel: ModelDefinition = {
+  name: 'users',
+  schema: MongoUserSchema,
+}
