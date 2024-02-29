@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common'
 import { UsersRepository } from '../../application/repositories/users-repository'
 import { MongoUsersRepository } from './repositories/mongo-users-repositories'
 
-import { MongoModule } from '@/domain/common/infra/database/mongodb/mongo.module'
+import { MongooseModule } from '@nestjs/mongoose'
+import { MongoUserSchema } from './schemas/mongo-user-schema'
 
 @Module({
-  imports: [MongoModule],
+  imports: [
+    MongooseModule.forFeature([{ name: 'users', schema: MongoUserSchema }]),
+  ],
   providers: [
     {
       provide: UsersRepository,

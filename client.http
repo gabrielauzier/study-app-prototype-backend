@@ -18,8 +18,8 @@ POST {{baseUrl}}/identity/users
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "johndoe@example.com",
+  "name": "Jorge Matheus",
+  "email": "jorgematheus@example.com",
   "password": "123456"
 }
 

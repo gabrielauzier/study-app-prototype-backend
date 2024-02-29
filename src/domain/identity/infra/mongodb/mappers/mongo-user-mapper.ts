@@ -1,10 +1,10 @@
 import { User } from '@/domain/identity/enterprise/entities/user'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { MongooseDocument } from '@/core/types/mongo'
-import { MongoUserProps } from '../schemas/mongo-user-schema'
+import { MongoUser } from '../schemas/mongo-user-schema'
 
 export class MongoUserMapper {
-  static toDomain(doc: MongooseDocument<MongoUserProps>): User {
+  static toDomain(doc: MongooseDocument<MongoUser>): User {
     const raw = doc.toObject()
 
     return User.create(

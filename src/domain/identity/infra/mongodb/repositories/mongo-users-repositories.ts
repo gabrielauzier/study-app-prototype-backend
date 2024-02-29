@@ -1,18 +1,14 @@
 import { Student } from '@/domain/notebook/enterprise/entities/student'
 import { Injectable } from '@nestjs/common'
 import { MongoUserMapper } from '../mappers/mongo-user-mapper'
-import { MongoUserSchema } from '../schemas/mongo-user-schema'
+import { MongoUser } from '../schemas/mongo-user-schema'
 import { UsersRepository } from '@/domain/identity/application/repositories/users-repository'
-import { MongoService } from '@/domain/common/infra/database/mongodb/mongo.service'
-import { MongooseModel } from '@/core/types/mongo'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
 
 @Injectable()
 export class MongoUsersRepository implements UsersRepository {
-  private model: MongooseModel<typeof MongoUserSchema>
-
-  constructor(mongo: MongoService) {
-    this.model = mongo.getConnection().model('users', MongoUserSchema)
-  }
+  constructor(@InjectModel('users') private model: Model<MongoUser>) {}
 
   async findByEmail(email: string): Promise<Student | null> {
     const student = await this.model.findOne({ email })
