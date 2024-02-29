@@ -1,40 +1,46 @@
 import 'dotenv/config'
 
+import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose'
 import { MongoMemoryServer } from 'mongodb-memory-server'
+import { disconnect } from 'mongoose'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { envSchema } from '@/core/env/env'
+import { EnvModule } from '@/core/env/env.module'
+import { AuthModule } from '@/domain/auth/auth.module'
+import { IdentityModule } from '@/domain/identity/infra/identity.module'
 
-import mongoose from 'mongoose'
+let mongo: MongoMemoryServer
 
-const DATABASE_URL_TESTING = 'mongodb://localhost:27017/test-db'
+export const rootMongooseTestModule = (options: MongooseModuleOptions = {}) =>
+  MongooseModule.forRootAsync({
+    useFactory: async () => {
+      mongo = await MongoMemoryServer.create()
+      const mongoUri = mongo.getUri()
 
-export const generateUniqueDatabaseURL = () => {
-  const mongo = new MongoMemoryServer()
-  return mongo.getUri()
+      console.log(mongoUri)
+      return {
+        uri: mongoUri,
+        ...options,
+      }
+    },
+  })
+
+export const closeMongoConnection = async () => {
+  await disconnect()
+  if (mongo) await mongo.stop()
 }
 
-export const connectDatabase = async (URI: string) =>
-  mongoose.createConnection(URI)
-
-export const closeDatabase = async () => {
-  await mongoose.connection.dropDatabase()
-  await mongoose.connection.close()
-  // await mongo.stop()
-}
-
-export const clearDatabase = async () => {
-  const collections = mongoose.connection.collections
-  for (const key in collections) {
-    const collection = collections[key]
-    await collection.deleteMany({})
-  }
-}
-
-beforeAll(async () => {
-  // const databaseURL = generateUniqueDatabaseURL()
-
-  connectDatabase(DATABASE_URL_TESTING)
-  process.env.DATABASE_URL = DATABASE_URL_TESTING
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      validate: (env) => envSchema.parse(env),
+      isGlobal: true,
+    }),
+    EnvModule,
+    AuthModule,
+    IdentityModule,
+    rootMongooseTestModule(),
+  ],
 })
-
-afterAll(async () => {
-  await mongoose.disconnect()
-})
+export class TestAppModule {}
